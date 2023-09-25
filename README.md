@@ -24,7 +24,7 @@ services:
     container_name: "exproxy"
     image: "subekti13/exproxy:latest"
     ports:
-      - 3112:3000
+      - 3000:3000
     restart: "unless-stopped"
     environment:
       - ENCRYPT=1
@@ -33,3 +33,6 @@ services:
       - ENCRYPT_IV=7727068a9916f3f6a5ba0d8f459d70e3
       - TOKEN=__ini_token
 ```
+
+now you can access your api over :
+`http://localhost:3000/?url=<real-api-url>`
