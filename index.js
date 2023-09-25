@@ -37,7 +37,7 @@ app.all("/", async (req, res, next) => {
       ["POST", "PUT"].includes(req.method) &&
       req.headers["content-type"] === "application/json"
     ) {
-      if (Object.keys(req.body || {}.length > 0) && req.body.data) {
+      if (Object.keys(req.body || {}).length > 0 && req.body.data) {
         _decryptedBody = enc.decrypt(req.body.data);
       } else {
         throw new Error("encrypted data is required");

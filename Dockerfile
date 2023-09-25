@@ -1,14 +1,14 @@
-FROM node:16-alpine as build
+FROM oven/bun:latest as build
 
 WORKDIR /app
 COPY . .
 
-RUN npm i
+RUN bun i
 
-FROM node:16-alpine
+FROM oven/bun:latest
 WORKDIR /app
 COPY --from=build /app/ /app/
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "start" ]
+CMD [ "bun", "run", "start" ]
