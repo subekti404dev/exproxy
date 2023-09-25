@@ -8,12 +8,10 @@ const PORT = process.env.PORT || 3000;
 const ENCRYPT = Boolean(Number(process.env.ENCRYPT || "0"));
 const ENABLE_PLAYGROUND = Boolean(Number(process.env.ENABLE_PLAYGROUND || "0"));
 const ENCRYPT_KEY = process.env.ENCRYPT_KEY || generateKey();
-const ENCRYPT_IV = process.env.ENCRYPT_IV || generateIV();
 const TOKEN = process.env.TOKEN;
 
 const enc = new Aes256Cbc({
   key: ENCRYPT_KEY,
-  iv: ENCRYPT_IV,
 });
 
 app.use(require("cors")());
