@@ -1,4 +1,7 @@
 # exproxy
+very simple proxy to encrypt your rest api
+
+![exproxy](images/exproxy1.png)
 
 To install dependencies:
 
@@ -13,8 +16,8 @@ npm start
 ```
 
 Running with docker
-```yaml
 
+```yaml
 version: "3.6"
 services:
   proxy:
@@ -29,5 +32,4 @@ services:
       - ENCRYPT_KEY=172695c533f01a99281f22c1877742f6b373069e4cbee82855c17baa61b58611
       - ENCRYPT_IV=7727068a9916f3f6a5ba0d8f459d70e3
       - TOKEN=__ini_token
-
 ```
