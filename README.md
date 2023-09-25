@@ -1,5 +1,5 @@
 # exproxy
-very simple proxy to encrypt your rest api
+very simple proxy to encrypt (aes-256-cbc) your rest api
 
 ![exproxy](images/exproxy1.png)
 
