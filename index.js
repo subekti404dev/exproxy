@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Aes256Cbc, generateKey, generateIV } = require("aes256cbc-enc");
+const { Aes256Cbc, generateKey } = require("aes256cbc-enc");
 const express = require("express");
 const Axios = require("axios");
 
@@ -111,7 +111,6 @@ app.listen(PORT, () => {
   if (ENCRYPT) {
     console.table({
       ENCRYPT_KEY,
-      ENCRYPT_IV,
     });
   }
 });
