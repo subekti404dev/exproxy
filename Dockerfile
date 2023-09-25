@@ -1,14 +1,17 @@
-FROM oven/bun:latest as build
+FROM node:latest as build
+RUN npm i -g bun
 
 WORKDIR /app
 COPY . .
 
-RUN bun i
+RUN bun i && bun run build
 
-FROM oven/bun:latest
+
+FROM ubuntu:latest
 WORKDIR /app
-COPY --from=build /app/ /app/
+COPY --from=build /app/exproxy /app/exproxy
+RUN chmod +x /app/exproxy
 
 EXPOSE 3000
 
-CMD [ "bun", "run", "start" ]
+CMD [ "/app/exproxy" ]
