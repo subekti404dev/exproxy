@@ -1,3 +1,5 @@
+import path from "path";
+
 require("dotenv").config();
 const { Aes256Cbc, generateKey } = require("aes256cbc-enc");
 const express = require("express");
@@ -16,6 +18,8 @@ const enc = new Aes256Cbc({
 
 app.use(require("cors")());
 app.use(express.json({ limit: "50mb" }));
+
+app.use('/_admin', express.static(path.join(__dirname, 'dashboard/build')))
 
 if (TOKEN) {
   app.use((req, res, next) => {
