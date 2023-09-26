@@ -1,30 +1,27 @@
-import path from "path";
-
 require("dotenv").config();
-const { Aes256Cbc, generateKey } = require("aes256cbc-enc");
+const path = require("path");
+const { Aes256Cbc } = require("aes256cbc-enc");
 const express = require("express");
 const Axios = require("axios");
+const { config } = require("./config");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const ENCRYPT = Boolean(Number(process.env.ENCRYPT || "0"));
-const ENABLE_PLAYGROUND = Boolean(Number(process.env.ENABLE_PLAYGROUND || "0"));
-const ENCRYPT_KEY = process.env.ENCRYPT_KEY || generateKey();
-const TOKEN = process.env.TOKEN;
+const PORT = 3000;
 
 const enc = new Aes256Cbc({
-  key: ENCRYPT_KEY,
+  key: config.encryptKey,
 });
 
 app.use(require("cors")());
 app.use(express.json({ limit: "50mb" }));
 
-app.use('/_admin', express.static(path.join(__dirname, 'dashboard/build')))
+app.use("/_admin", express.static(path.join(__dirname, "_dashboard")));
+app.use("/_admin", require("./routes/api.routes"));
 
-if (TOKEN) {
+if (config.staticToken) {
   app.use((req, res, next) => {
     const reqToken = req.headers?.["u-token"];
-    if (reqToken !== TOKEN) {
+    if (reqToken !== config.staticToken) {
       res.status(401).json({ message: "Unauthorized" });
     } else {
       next();
@@ -37,7 +34,7 @@ app.all("/", async (req, res, next) => {
     // handle decryption
     let _decryptedBody;
     if (
-      ENCRYPT &&
+      config.isEnableEncrypt &&
       ["POST", "PUT"].includes(req.method) &&
       req.headers["content-type"] === "application/json"
     ) {
@@ -73,7 +70,7 @@ app.all("/", async (req, res, next) => {
     const resp = await Axios.request(axiosOpts);
 
     // handle encryption
-    if (ENCRYPT) {
+    if (config.isEnableEncrypt) {
       const encData = enc.encrypt(JSON.stringify(resp.data || {}));
       res.json({ data: encData });
     } else {
@@ -85,7 +82,7 @@ app.all("/", async (req, res, next) => {
   }
 });
 
-if (ENABLE_PLAYGROUND) {
+if (config.isEnablePlayground) {
   app.post("/encrypt", async (req, res) => {
     try {
       const encrypted = enc.encrypt(JSON.stringify(req.body.data));
@@ -112,9 +109,9 @@ if (ENABLE_PLAYGROUND) {
 
 app.listen(PORT, () => {
   console.log(`proxy server running on http://localhost:${PORT}`);
-  if (ENCRYPT) {
+  if (config.isEnableEncrypt) {
     console.table({
-      ENCRYPT_KEY,
+      encryptKey: config.encryptKey,
     });
   }
 });
