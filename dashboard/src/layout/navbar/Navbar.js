@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Drawer, Button } from "antd";
+import { Drawer, Button, Row, Col } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import "./Navbar.css";
 // import logo from "./../../logo.svg";
@@ -20,10 +20,10 @@ const NavBar = ({ menu }) => {
         onClick={() => setVisible(false)}
         onClose={() => setVisible(false)}
         visible={visible}
-      > 
+      >
         {menu}
-     </Drawer>
-     {/* <a href="/"><img src={logo} className="logo" alt="logo" /></a>      */}
+      </Drawer>
+      {/* <a href="/"><img src={logo} className="logo" alt="logo" /></a>      */}
     </nav>
   );
 };

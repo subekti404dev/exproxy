@@ -75,3 +75,5 @@ class Config {
 }
 
 export const config = new Config();
+export const username = process.env.USERNAME || "admin";
+export const password = process.env.PASSWORD || "admin";

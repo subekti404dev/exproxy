@@ -1,5 +1,5 @@
 import { useState } from "react";
-import TopicMenu from "../../layout/topic-menu/TopicMenu";
+import MenuComp from "../../layout/menu/Menu";
 import NavBar from "../../layout/navbar/Navbar";
 import { Layout } from "antd";
 import SideBar from "../../layout/sidebar/Sidebar";
@@ -7,7 +7,7 @@ import { SettingPage } from "../setting/Setting";
 import { MaskingPage } from "../masking/Masking";
 
 const HomePage = () => {
-  const topics = [
+  const menus = [
     {
       label: "Setting",
       page: SettingPage,
@@ -27,14 +27,14 @@ const HomePage = () => {
   };
 
   const Menu = (
-    <TopicMenu
-      topics={topics}
+    <MenuComp
+      menus={menus}
       selectedKey={selectedKey}
       changeSelectedKey={changeSelectedKey}
     />
   );
 
-  const Page = topics[contentIndex].page;
+  const Page = menus[contentIndex].page;
 
   return (
     <>

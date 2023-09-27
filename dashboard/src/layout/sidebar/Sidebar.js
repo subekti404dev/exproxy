@@ -12,6 +12,7 @@ const SideBar = ({ menu }) => {
       theme="light"
       collapsedWidth={0}
       trigger={null}
+      width={280}
     >
       {menu}
     </Layout.Sider>

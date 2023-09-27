@@ -3,7 +3,7 @@ const path = require("path");
 const { Aes256Cbc } = require("aes256cbc-enc");
 const express = require("express");
 const Axios = require("axios");
-const { config } = require("./config");
+const { config, username, password } = require("./config");
 
 const app = express();
 const PORT = 3000;
@@ -118,7 +118,8 @@ app.listen(PORT, () => {
   console.log(`proxy server running on http://localhost:${PORT}`);
   if (config.isEnableEncrypt) {
     console.table({
-      encryptKey: config.encryptKey,
+      username,
+      password,
     });
   }
 });

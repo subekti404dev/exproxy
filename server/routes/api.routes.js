@@ -2,9 +2,7 @@ require("dotenv").config();
 const sha256 = require("js-sha256");
 const express = require("express");
 const router = express.Router();
-const { config } = require("../config");
-const _username = process.env.USERNAME || "admin";
-const _password = process.env.PASSWORD || "admin";
+const { config, username: _username, password: _password } = require("../config");
 const loginHash = sha256(`${_username}:${_password}`);
 
 const checkLoginHash = (req) => {
