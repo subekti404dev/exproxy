@@ -175,3 +175,4 @@ server/_dashboard
 server/config.json
 bin
 config.json
+app

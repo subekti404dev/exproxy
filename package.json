@@ -1,11 +1,11 @@
 {
   "name": "exproxy",
   "scripts": {
-    "clean": "rm -rf dist/ && rm -rf server/_dashboard",
+    "clean": "rm -rf app/ && mkdir -p app",
     "start": "bun server/index.js",
-    "build": "bun run clean && bun run build:dashboard && ncc build server/index.js -o dist && bun run build:bin",
-    "build:bin": "cd dist && bun build ./index.js --compile --outfile ./exproxy",
-    "build:dashboard": "cd dashboard && bun run build && cd .. && cp -R dashboard/build server/_dashboard"
+    "build": "bun run clean && bun run build:dashboard && ncc build server/index.js -o app && bun run build:bin",
+    "build:bin": "cd app && bun build ./index.js --compile --outfile ./exproxy && rm ./index.js",
+    "build:dashboard": "cd dashboard && bun run build && cd .. && cp -R dashboard/build app/_dashboard"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

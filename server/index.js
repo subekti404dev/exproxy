@@ -16,15 +16,21 @@ const getEnc = () =>
 app.use(require("cors")());
 app.use(express.json({ limit: "50mb" }));
 
-app.use("/_admin", express.static(path.join(__filename, "..", "_dashboard")));
+console.log(path.resolve(process.cwd(), "_dashboard"));
+app.use("/_admin", express.static(path.join(process.cwd(), "_dashboard")));
 app.use("/_api", require("./routes/api.routes"));
 
 app.use((req, res, next) => {
   // console.log('masuk pengecekan');
-  if (!config.staticToken) next();
+  if (!config.staticToken) {
+    next();
+    return;
+  }
   const reqToken = req.headers?.["u-token"];
   if (reqToken !== config.staticToken) {
+    console.log({ reqToken, configToken: config.staticToken });
     res.status(401).json({ message: "Unauthorized" });
+    return;
   } else {
     next();
   }
@@ -32,6 +38,7 @@ app.use((req, res, next) => {
 
 app.all("/", async (req, res, next) => {
   try {
+    console.log("masuk");
     // handle decryption
     let _decryptedBody;
     if (
@@ -41,18 +48,24 @@ app.all("/", async (req, res, next) => {
     ) {
       if (Object.keys(req.body || {}).length > 0 && req.body.data) {
         _decryptedBody = getEnc().decrypt(req.body.data);
+        console.log({ _decryptedBody });
       } else {
         throw new Error("encrypted data is required");
       }
     }
 
+    console.log("lewat");
     // handle validation
     const tUrl = req.query?.url || "";
     if (!tUrl) throw new Error("Need URL");
+    console.log({ tUrl });
     const targetUrl = new URL(tUrl);
+    console.log({ targetUrl });
     if (!["http:", "https:"].includes(targetUrl.protocol)) {
       throw new Error("Invalid Protocol");
     }
+
+    console.log("sebelum cek body");
 
     // handle request
     const data = ["POST", "PUT"].includes(req.method)
@@ -68,14 +81,22 @@ app.all("/", async (req, res, next) => {
       },
       ...(data ? { data } : {}),
     };
+    console.log("sebelum hit");
     const resp = await Axios.request(axiosOpts);
+    // console.log({ resp });
+
+    console.log("lewat hit", {
+      "config.isEnableEncrypt": config.isEnableEncrypt,
+    });
 
     // handle encryption
     if (config.isEnableEncrypt) {
       const encData = getEnc().encrypt(JSON.stringify(resp.data || {}));
       res.json({ data: encData });
     } else {
+      console.log("masuk result");
       res.status(resp.status).json(resp.data);
+      return;
     }
   } catch (error) {
     const errMsg = error?.response?.data || error?.message;

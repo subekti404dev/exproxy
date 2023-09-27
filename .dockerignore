@@ -2,5 +2,7 @@ node_modules
 dashboard/node_modules
 .env
 server/config.json
-bin
+server/_dashboard
+dist
 config.json
+app
