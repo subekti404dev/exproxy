@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const { existsSync, writeFileSync } = require("fs");
 const path = require("path");
 const configFilePath = path.resolve(process.cwd(), "config.json");

@@ -31,7 +31,7 @@ export const SettingPage = () => {
     await updateConfig({ enable_playground: value });
   };
   const LeftCol = ({ children }) => (
-    <Col xs={24} md={8} style={{ display: "flex", alignItems: "center" }}>
+    <Col xs={24} md={6} style={{ display: "flex", alignItems: "center" }}>
       {children}
     </Col>
   );
@@ -39,7 +39,7 @@ export const SettingPage = () => {
   const RightCol = ({ children }) => (
     <Col
       xs={24}
-      md={16}
+      md={18}
       style={{
         flex: 1,
       }}
@@ -94,12 +94,12 @@ export const SettingPage = () => {
           </LeftCol>
           <Col
             xs={24}
-            md={16}
+            md={18}
             style={{
               flex: 1,
             }}
           >
-            <Row>
+            <Row style={{ marginBottom: -22 }}>
               <Col xs={20}>
                 <Form.Item
                   name={"encrypt_key"}
@@ -108,6 +108,7 @@ export const SettingPage = () => {
                     { len: 64 },
                     { validator: validateHex },
                   ]}
+                  style={{ margin: 0 }}
                 >
                   <Input
                     name={"encrypt_key"}
@@ -140,14 +141,14 @@ export const SettingPage = () => {
           </LeftCol>
           <Col
             xs={24}
-            md={16}
+            md={18}
             style={{
               flex: 1,
             }}
           >
-            <Row>
+            <Row style={{ marginBottom: -22 }}>
               <Col xs={20}>
-                <Form.Item name={"static_token"}>
+                <Form.Item name={"static_token"} style={{ margin: 0 }}>
                   <Input style={{ textAlign: "right", height: 40 }} />
                 </Form.Item>
               </Col>
