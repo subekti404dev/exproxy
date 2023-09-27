@@ -19,10 +19,6 @@ export const SettingPage = () => {
   const { config, updateConfig } = useConfig();
   const [errForm, setErrForm] = useState([]);
 
-  useEffect(() => {
-    console.log(config);
-  }, [config]);
-
   const toggleEncrypt = async (value) => {
     await updateConfig({ enable_encrypt: value });
   };

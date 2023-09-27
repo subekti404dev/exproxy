@@ -9,7 +9,6 @@ const LoginForm = () => {
   const { request } = useHttp();
   const onFinish = async (values) => {
     try {
-      console.log("Received values of form: ", values);
       const { data } = await request.post("/login", {
         username: values.username,
         password: values.password,

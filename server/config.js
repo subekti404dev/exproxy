@@ -14,13 +14,13 @@ class Config {
 
   constructor() {
     if (existsSync(configFilePath)) {
-      console.log("Exist:", configFilePath);
+      console.log("Config file exist: ", configFilePath);
       const file = Bun.file(configFilePath);
       file.json().then((json) => {
         this._config = json;
       });
     } else {
-      console.log("Create:", configFilePath);
+      console.log("Create config file: ", configFilePath);
       this._config.encrypt_key = generateKey();
       this._writeCurrentConfig();
     }

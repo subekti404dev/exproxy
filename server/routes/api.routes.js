@@ -2,7 +2,11 @@ require("dotenv").config();
 const sha256 = require("js-sha256");
 const express = require("express");
 const router = express.Router();
-const { config, username: _username, password: _password } = require("../config");
+const {
+  config,
+  username: _username,
+  password: _password,
+} = require("../config");
 const loginHash = sha256(`${_username}:${_password}`);
 
 const checkLoginHash = (req) => {
@@ -15,7 +19,6 @@ router.post("/login", (req, res) => {
     if (!username || !password) {
       throw new Error(`'username' and 'password' are required!`);
     }
-    // console.log({ _username, _password });
     if (username === _username && password === _password) {
       res.json({ success: true, hash: loginHash });
     } else {
