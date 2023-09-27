@@ -2,7 +2,6 @@ const { existsSync, writeFileSync } = require("fs");
 const path = require("path");
 const configFilePath = path.join(__dirname, "config.json");
 const { generateKey } = require("aes256cbc-enc");
-
 class Config {
   _config = {
     enable_encrypt: true,
@@ -57,6 +56,15 @@ class Config {
 
   setStaticToken(value) {
     this._config = { ...this._config, static_token: value };
+    this._writeCurrentConfig();
+  }
+
+  get config() {
+    return this._config;
+  }
+
+  setConfig(value) {
+    this._config = value;
     this._writeCurrentConfig();
   }
 }

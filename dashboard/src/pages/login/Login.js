@@ -1,15 +1,27 @@
-import { Form, Input, Button, Card, Typography } from "antd";
+import { Form, Input, Button, Card, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import http from "../../utils/http";
+import { useAuth } from "../../hooks/useAuth";
 const { Title } = Typography;
 
 const LoginForm = () => {
+  const { setHash } = useAuth();
   const onFinish = async (values) => {
-    console.log("Received values of form: ", values);
-    const res = await http.post("/login", {
-      username: values.username,
-      password: values.password,
-    });
+    try {
+      console.log("Received values of form: ", values);
+      const { data } = await http.post("/login", {
+        username: values.username,
+        password: values.password,
+      });
+      if (data.hash) {
+        message.success("Login Successfully");
+        setHash(data.hash);
+      } else {
+        throw new Error();
+      }
+    } catch (error) {
+      message.error("Invalid Credentials");
+    }
   };
 
   return (

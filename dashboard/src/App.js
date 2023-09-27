@@ -1,18 +1,18 @@
 import "./App.css";
 import { BrowserRouter } from "react-router-dom";
-import Login from "./pages/login/Login";
 import { ConfigProvider } from "antd";
 import { AuthContextProvider } from "./contexts/auth.context";
+import Router from "./routes/router";
 
 function App() {
   return (
-    <BrowserRouter basename="/_admin">
-      <AuthContextProvider>
+    <AuthContextProvider>
+      <BrowserRouter basename="/_admin">
         <ConfigProvider>
-          <Login />
+          <Router />
         </ConfigProvider>
-      </AuthContextProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthContextProvider>
   );
 }
 

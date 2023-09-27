@@ -2,19 +2,23 @@ import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext({});
 export const AuthContextProvider = ({ children }) => {
-  const [token, setToken] = useState("");
-  const [sessionExp, setSessionExp] = useState("");
+  const [hash, setHashState] = useState("");
 
-  const getTokenFromLS = async () => {
-    const lsToken = localStorage.getItem("token");
-    setSessionExp();
-    setToken(lsToken);
+  const getHashFromLS = async () => {
+    const lsHash = localStorage.getItem("hash");
+    setHashState(lsHash);
+  };
+
+  const setHash = (hash) => {
+    setHashState(hash);
+    localStorage.setItem("hash", hash);
   };
 
   useEffect(() => {
-    getTokenFromLS();
+    getHashFromLS();
+    // eslint-disable-next-line
   }, []);
 
-  const values = { token, sessionExp, getTokenFromLS };
+  const values = { hash, setHash };
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;
 };
