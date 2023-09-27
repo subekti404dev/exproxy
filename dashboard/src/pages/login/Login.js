@@ -1,15 +1,16 @@
 import { Form, Input, Button, Card, Typography, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import http from "../../utils/http";
 import { useAuth } from "../../hooks/useAuth";
+import { useHttp } from "../../hooks/useHttp";
 const { Title } = Typography;
 
 const LoginForm = () => {
   const { setHash } = useAuth();
+  const { request } = useHttp();
   const onFinish = async (values) => {
     try {
       console.log("Received values of form: ", values);
-      const { data } = await http.post("/login", {
+      const { data } = await request.post("/login", {
         username: values.username,
         password: values.password,
       });

@@ -7,11 +7,13 @@ export const AuthContextProvider = ({ children }) => {
   const getHashFromLS = async () => {
     const lsHash = localStorage.getItem("hash");
     setHashState(lsHash);
+    window.hash = lsHash;
   };
 
   const setHash = (hash) => {
     setHashState(hash);
     localStorage.setItem("hash", hash);
+    window.hash = hash;
   };
 
   useEffect(() => {

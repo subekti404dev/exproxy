@@ -15,8 +15,8 @@ const enc = new Aes256Cbc({
 app.use(require("cors")());
 app.use(express.json({ limit: "50mb" }));
 
-app.use("/_admin", express.static(path.join(__dirname, "_dashboard")));
-app.use("/_admin", require("./routes/api.routes"));
+app.use("/_admin", express.static(path.join(__filename, "..", "_dashboard")));
+app.use("/_api", require("./routes/api.routes"));
 
 if (config.staticToken) {
   app.use((req, res, next) => {

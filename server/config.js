@@ -1,6 +1,6 @@
 const { existsSync, writeFileSync } = require("fs");
 const path = require("path");
-const configFilePath = path.join(__dirname, "config.json");
+const configFilePath = path.resolve(process.cwd(), "config.json");
 const { generateKey } = require("aes256cbc-enc");
 class Config {
   _config = {
@@ -12,8 +12,13 @@ class Config {
 
   constructor() {
     if (existsSync(configFilePath)) {
-      this._config = require(configFilePath);
+      console.log("Exist:", configFilePath);
+      const file = Bun.file(configFilePath);
+      file.json().then((json) => {
+        this._config = json;
+      });
     } else {
+      console.log("Create:", configFilePath);
       this._config.encrypt_key = generateKey();
       this._writeCurrentConfig();
     }
