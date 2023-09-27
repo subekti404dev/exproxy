@@ -1,9 +1,10 @@
 {
   "name": "exproxy",
   "scripts": {
+    "clean": "rm -rf dist/ && rm -rf server/_dashboard",
     "start": "bun server/index.js",
-    "build": "bun run build:dashboard && ncc build server/index.js -o dist && bun run build:bin",
-    "build:bin": "bun build ./dist/index.js --compile --outfile bin/exproxy",
+    "build": "bun run clean && bun run build:dashboard && ncc build server/index.js -o dist && bun run build:bin",
+    "build:bin": "cd dist && bun build ./index.js --compile --outfile ./exproxy",
     "build:dashboard": "cd dashboard && bun run build && cd .. && cp -R dashboard/build server/_dashboard"
   },
   "peerDependencies": {
