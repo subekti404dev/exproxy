@@ -8,9 +8,10 @@ const { config } = require("./config");
 const app = express();
 const PORT = 3000;
 
-const enc = new Aes256Cbc({
-  key: config.encryptKey,
-});
+const getEnc = () =>
+  new Aes256Cbc({
+    key: config.encryptKey,
+  });
 
 app.use(require("cors")());
 app.use(express.json({ limit: "50mb" }));
@@ -18,16 +19,16 @@ app.use(express.json({ limit: "50mb" }));
 app.use("/_admin", express.static(path.join(__filename, "..", "_dashboard")));
 app.use("/_api", require("./routes/api.routes"));
 
-if (config.staticToken) {
-  app.use((req, res, next) => {
-    const reqToken = req.headers?.["u-token"];
-    if (reqToken !== config.staticToken) {
-      res.status(401).json({ message: "Unauthorized" });
-    } else {
-      next();
-    }
-  });
-}
+app.use((req, res, next) => {
+  // console.log('masuk pengecekan');
+  if (!config.staticToken) next();
+  const reqToken = req.headers?.["u-token"];
+  if (reqToken !== config.staticToken) {
+    res.status(401).json({ message: "Unauthorized" });
+  } else {
+    next();
+  }
+});
 
 app.all("/", async (req, res, next) => {
   try {
@@ -39,7 +40,7 @@ app.all("/", async (req, res, next) => {
       req.headers["content-type"] === "application/json"
     ) {
       if (Object.keys(req.body || {}).length > 0 && req.body.data) {
-        _decryptedBody = enc.decrypt(req.body.data);
+        _decryptedBody = getEnc().decrypt(req.body.data);
       } else {
         throw new Error("encrypted data is required");
       }
@@ -71,7 +72,7 @@ app.all("/", async (req, res, next) => {
 
     // handle encryption
     if (config.isEnableEncrypt) {
-      const encData = enc.encrypt(JSON.stringify(resp.data || {}));
+      const encData = getEnc().encrypt(JSON.stringify(resp.data || {}));
       res.json({ data: encData });
     } else {
       res.status(resp.status).json(resp.data);
@@ -82,30 +83,36 @@ app.all("/", async (req, res, next) => {
   }
 });
 
-if (config.isEnablePlayground) {
-  app.post("/encrypt", async (req, res) => {
-    try {
-      const encrypted = enc.encrypt(JSON.stringify(req.body.data));
-      res.json({ data: encrypted });
-    } catch (error) {
-      res.status(400).json({ message: error?.message });
-    }
-  });
+app.post("/encrypt", async (req, res) => {
+  console.log({ isEnablePlayground: config.isEnablePlayground });
+  if (!config.isEnablePlayground) {
+    res.status(401).json({ message: "Playground was disabled" });
+  }
+  try {
+    const encrypted = getEnc().encrypt(JSON.stringify(req.body.data));
+    res.json({ data: encrypted });
+  } catch (error) {
+    res.status(400).json({ message: error?.message });
+  }
+});
 
-  app.post("/decrypt", async (req, res) => {
+app.post("/decrypt", async (req, res) => {
+  if (!config.isEnablePlayground) {
+    res.status(401).json({ message: "Playground was disabled" });
+  }
+  try {
+    const decrypted = getEnc().decrypt(req.body.data);
+    console.log({ decrypted });
     try {
-      const decrypted = enc.decrypt(req.body.data);
-      try {
-        const json = JSON.parse(decrypted);
-        res.json({ data: json, type: "json" });
-      } catch (error) {
-        res.json({ data: decrypted, type: "text" });
-      }
+      const json = JSON.parse(decrypted);
+      res.json({ data: json, type: "json" });
     } catch (error) {
-      res.status(400).json({ message: error?.message });
+      res.json({ data: decrypted, type: "text" });
     }
-  });
-}
+  } catch (error) {
+    res.status(400).json({ message: error?.message });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`proxy server running on http://localhost:${PORT}`);

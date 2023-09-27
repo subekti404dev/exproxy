@@ -69,7 +69,7 @@ class Config {
   }
 
   setConfig(value) {
-    this._config = value;
+    this._config = { ...this._config, ...value };
     this._writeCurrentConfig();
   }
 }

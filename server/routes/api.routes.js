@@ -37,4 +37,14 @@ router.get("/config", (req, res) => {
   }
 });
 
+router.put("/config", (req, res) => {
+  try {
+    checkLoginHash(req);
+    config.setConfig(req.body);
+    res.json({ success: true, data: config.config });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = router;
