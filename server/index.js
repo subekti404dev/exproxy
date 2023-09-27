@@ -1,3 +1,5 @@
+import { isJSONString } from "./utils/json.util";
+
 require("dotenv").config();
 const path = require("path");
 const { Aes256Cbc } = require("aes256cbc-enc");
@@ -107,6 +109,8 @@ app.post("/decrypt", async (req, res) => {
   try {
     const decrypted = getEnc().decrypt(req.body.data);
     try {
+      const isJSON = isJSONString(decrypted);
+      if (!isJSON) throw new Error("not json");
       const json = JSON.parse(decrypted);
       res.json({ data: json, type: "json" });
     } catch (error) {

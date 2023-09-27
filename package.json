@@ -11,7 +11,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "aes256cbc-enc": "1.0.8",
+    "aes256cbc-enc": "1.0.9",
     "axios": "^1.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
