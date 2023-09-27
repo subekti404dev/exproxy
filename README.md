@@ -17,6 +17,18 @@ services:
     environment:
       - USERNAME=urip
       - PASSWORD=urip
+    volumes:
+      - /path-to-your-config.json:/app/config.json
+```
+
+default config.json
+```json
+{
+  "enable_encrypt": true,
+  "enable_playground": false,
+  "encrypt_key": "07810fa110e7db62ad4b22b521636294281a362501cdf07bfe92549cec832dba",
+  "static_token": null
+}
 ```
 
 dashboard: `http://localhost:3000/_admin`
