@@ -48,4 +48,41 @@ router.put("/config", (req, res) => {
   }
 });
 
+router.get("/masking", (req, res) => {
+  res.json({ success: true, data: config.config.domains });
+});
+
+router.post("/masking", (req, res) => {
+  try {
+    const { mask_id, domain } = req.body || {};
+    if (!mask_id || !domain) throw new Error("mask_id and domain are required");
+    config.addDomain({ mask_id, domain });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.put("/masking/:maskId", (req, res) => {
+  try {
+    const { domain } = req.body || {};
+    const mask_id = req.params.mask_id;
+    if (!mask_id || !domain) throw new Error("mask_id and domain are required");
+    config.updateDomain({ mask_id, domain });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.delete("/masking/:maskId", (req, res) => {
+  try {
+    const mask_id = req.params.mask_id;
+    if (!mask_id) throw new Error("mask_id is required");
+    config.deleteDomain({ mask_id });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 module.exports = router;
