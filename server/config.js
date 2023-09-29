@@ -89,27 +89,32 @@ class Config {
   }
 
   updateDomain({ mask_id, domain }) {
-    const isExist = this._config.domains.find((d) => d.mask_id === mask_id);
-    if (!!isExist) {
+    const isExist = this._config.domains.find(
+      (d) => d.mask_id === mask_id
+    )?.domain;
+    if (!isExist) {
       throw new Error("domain not found");
     } else {
-      const domains = [
-        ...this._config.domains.find((d) => d.mask_id !== mask_id),
-        { mask_id, domain },
-      ];
+      const domains = this._config.domains.map((d) => {
+        if (d.mask_id !== mask_id) return d;
+        return {
+          mask_id,
+          domain,
+        };
+      });
       this._config.domains = domains;
       this._writeCurrentConfig();
     }
   }
 
   deleteDomain({ mask_id }) {
-    const isExist = this._config.domains.find((d) => d.mask_id === mask_id);
-    if (!!isExist) {
+    const isExist = this._config.domains.find(
+      (d) => d.mask_id === mask_id
+    )?.domain;
+    if (!isExist) {
       throw new Error("domain not found");
     } else {
-      const domains = [
-        ...this._config.domains.find((d) => d.mask_id !== mask_id),
-      ];
+      const domains = this._config.domains.filter((d) => d.mask_id !== mask_id);
       this._config.domains = domains;
       this._writeCurrentConfig();
     }

@@ -27,5 +27,5 @@ export const useConfig = () => {
     // eslint-disable-next-line
   }, []);
 
-  return { config, updateConfig };
+  return { config, getConfig, updateConfig };
 };

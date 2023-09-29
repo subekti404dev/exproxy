@@ -63,7 +63,7 @@ router.post("/masking", (req, res) => {
   }
 });
 
-router.put("/masking/:maskId", (req, res) => {
+router.put("/masking/:mask_id", (req, res) => {
   try {
     const { domain } = req.body || {};
     const mask_id = req.params.mask_id;
@@ -75,7 +75,7 @@ router.put("/masking/:maskId", (req, res) => {
   }
 });
 
-router.delete("/masking/:maskId", (req, res) => {
+router.delete("/masking/:mask_id", (req, res) => {
   try {
     const mask_id = req.params.mask_id;
     if (!mask_id) throw new Error("mask_id is required");
