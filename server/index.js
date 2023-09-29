@@ -98,12 +98,12 @@ app.all("/", async (req, res) => {
   }
 });
 
-app.all("/m/:id/*", async (req, res) => {
+app.all(["/m/:id", "/m/:id/*"], async (req, res) => {
   try {
     const id = req.params.id;
     const domain = config.getDomainByMaskId({ mask_id: id });
     if (!!domain) {
-      const upath = req.params?.[0];
+      const upath = req.params?.[0] || "";
       const udomain = domain;
       const uquery = Object.keys(req.query || {})
         .map((k) => `${k}=${req.query[k]}`)
