@@ -71,13 +71,27 @@ app.all("/", async (req, res) => {
     const resp = await Axios.request(axiosOpts);
 
     // handle encryption
-    encryptResponseBody({
-      res,
-      data: resp.data,
-      status: resp.status,
-      isEnableEncrypt: config.isEnableEncrypt,
-      getEnc,
-    });
+    const isJson = (resp.headers?.["content-type"] || "")
+      .toLowerCase()
+      .includes("application/json");
+
+    if (isJson) {
+      encryptResponseBody({
+        res,
+        data: resp.data,
+        status: resp.status,
+        isEnableEncrypt: config.isEnableEncrypt,
+        getEnc,
+      });
+    } else {
+      const resp = await Axios.request({
+        ...axiosOpts,
+        responseType: "arraybuffer",
+      });
+
+      res.setHeader("Content-Type", resp.headers?.["content-type"]);
+      res.send(resp.data);
+    }
   } catch (error) {
     const errMsg = error?.response?.data || error?.message;
     res.status(400).json({ message: errMsg });
@@ -129,6 +143,11 @@ app.all("/m/:id/*", async (req, res) => {
       const resp = await Axios.request(axiosOpts);
 
       // handle encryption
+      const isJson = (resp.headers?.["content-type"] || "")
+      .toLowerCase()
+      .includes("application/json");
+
+    if (isJson) {
       encryptResponseBody({
         res,
         data: resp.data,
@@ -136,6 +155,15 @@ app.all("/m/:id/*", async (req, res) => {
         isEnableEncrypt: config.isEnableEncrypt,
         getEnc,
       });
+    } else {
+      const resp = await Axios.request({
+        ...axiosOpts,
+        responseType: "arraybuffer",
+      });
+
+      res.setHeader("Content-Type", resp.headers?.["content-type"]);
+      res.send(resp.data);
+    }
     } else {
       throw new Error("Domain not found");
     }
