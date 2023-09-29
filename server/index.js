@@ -1,3 +1,4 @@
+import { decryptRequestBody, encryptResponseBody } from "./utils/enc.util";
 import { isJSONString } from "./utils/json.util";
 
 require("dotenv").config();
@@ -35,21 +36,14 @@ app.use((req, res, next) => {
   }
 });
 
-app.all("/", async (req, res, next) => {
+app.all("/", async (req, res) => {
   try {
     // handle decryption
-    let _decryptedBody;
-    if (
-      config.isEnableEncrypt &&
-      ["POST", "PUT"].includes(req.method) &&
-      req.headers["content-type"] === "application/json"
-    ) {
-      if (Object.keys(req.body || {}).length > 0 && req.body.data) {
-        _decryptedBody = getEnc().decrypt(req.body.data);
-      } else {
-        throw new Error("encrypted data is required");
-      }
-    }
+    const _decryptedBody = decryptRequestBody({
+      req,
+      isEnableEncrypt: config.isEnableEncrypt,
+      getEnc,
+    });
 
     // handle validation
     const tUrl = req.query?.url || "";
@@ -77,12 +71,73 @@ app.all("/", async (req, res, next) => {
     const resp = await Axios.request(axiosOpts);
 
     // handle encryption
-    if (config.isEnableEncrypt) {
-      const encData = getEnc().encrypt(JSON.stringify(resp.data || {}));
-      res.json({ data: encData });
+    encryptResponseBody({
+      res,
+      data: resp.data,
+      status: resp.status,
+      isEnableEncrypt: config.isEnableEncrypt,
+      getEnc,
+    });
+  } catch (error) {
+    const errMsg = error?.response?.data || error?.message;
+    res.status(400).json({ message: errMsg });
+  }
+});
+
+app.all("/m/:id/*", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const domain = config.getDomainByMaskId({ mask_id: id });
+    if (!!domain) {
+      const upath = req.params?.[0];
+      const udomain = domain;
+      const uquery = Object.keys(req.query || {})
+        .map((k) => `${k}=${req.query[k]}`)
+        .join("&");
+
+      const tUrl = path.join(udomain, upath, uquery ? `?${uquery}` : "");
+
+      // handle decryption
+      const _decryptedBody = decryptRequestBody({
+        req,
+        isEnableEncrypt: config.isEnableEncrypt,
+        getEnc,
+      });
+
+      // handle validation
+      if (!tUrl) throw new Error("Need URL");
+      const targetUrl = new URL(tUrl);
+      if (!["http:", "https:"].includes(targetUrl.protocol)) {
+        throw new Error("Invalid Protocol");
+      }
+
+      // handle request
+      const data = ["POST", "PUT"].includes(req.method)
+        ? _decryptedBody || req.body
+        : undefined;
+      delete req.headers["content-length"];
+      const axiosOpts = {
+        url: tUrl,
+        method: req.method,
+        headers: {
+          ...req.headers,
+          host: targetUrl.host,
+          "accept-encoding": "*",
+        },
+        ...(data ? { data } : {}),
+      };
+      const resp = await Axios.request(axiosOpts);
+
+      // handle encryption
+      encryptResponseBody({
+        res,
+        data: resp.data,
+        status: resp.status,
+        isEnableEncrypt: config.isEnableEncrypt,
+        getEnc,
+      });
     } else {
-      res.status(resp.status).json(resp.data);
-      return;
+      throw new Error("Domain not found");
     }
   } catch (error) {
     const errMsg = error?.response?.data || error?.message;

@@ -10,6 +10,7 @@ class Config {
     enable_playground: false,
     encrypt_key: null,
     static_token: null,
+    domains: [],
   };
 
   constructor() {
@@ -17,7 +18,8 @@ class Config {
       console.log("Config file exist: ", configFilePath);
       const file = Bun.file(configFilePath);
       file.json().then((json) => {
-        this._config = json;
+        this._config = { ...json, domains: json?.domains || [] };
+        this._writeCurrentConfig();
       });
     } else {
       console.log("Create config file: ", configFilePath);
@@ -73,6 +75,48 @@ class Config {
   setConfig(value) {
     this._config = { ...this._config, ...value };
     this._writeCurrentConfig();
+  }
+
+  addDomain({ mask_id, domain }) {
+    const isExist = !!this._config.domains.find((d) => d.mask_id === mask_id);
+    if (isExist) {
+      throw new Error("mask_id already inused");
+    } else {
+      const domains = [...this._config.domains, { mask_id, domain }];
+      this._config.domains = domains;
+      this._writeCurrentConfig();
+    }
+  }
+
+  updateDomain({ mask_id, domain }) {
+    const isExist = this._config.domains.find((d) => d.mask_id === mask_id);
+    if (!!isExist) {
+      throw new Error("domain not found");
+    } else {
+      const domains = [
+        ...this._config.domains.find((d) => d.mask_id !== mask_id),
+        { mask_id, domain },
+      ];
+      this._config.domains = domains;
+      this._writeCurrentConfig();
+    }
+  }
+
+  deleteDomain({ mask_id }) {
+    const isExist = this._config.domains.find((d) => d.mask_id === mask_id);
+    if (!!isExist) {
+      throw new Error("domain not found");
+    } else {
+      const domains = [
+        ...this._config.domains.find((d) => d.mask_id !== mask_id),
+      ];
+      this._config.domains = domains;
+      this._writeCurrentConfig();
+    }
+  }
+
+  getDomainByMaskId({ mask_id }) {
+    return this._config.domains.find((d) => d.mask_id === mask_id)?.domain;
   }
 }
 
